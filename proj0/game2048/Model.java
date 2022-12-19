@@ -123,6 +123,7 @@ public class Model extends Observable {
         setChanged();
     }
 
+
     /**
      * Tilt the board toward SIDE. Return true iff this changes the board.
      * <p>
@@ -143,6 +144,47 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+
+        board.setViewingPerspective(side);
+
+        boolean[][] merged = new boolean[board.size()][board.size()];
+
+        for (int c = 0; c < board.size(); c += 1) {
+            for (int r = 2; r >= 0; r -= 1) {
+                Tile curr = board.tile(c, r);
+                if (curr == null) {
+                    continue;
+                }
+                for (int k = r + 1; k < board.size(); k += 1) {
+                    Tile next = board.tile(c, k);
+
+                    if (next == null && k < board.size() - 1) {
+                        continue;
+                    }
+
+                    if(next != null && (next.value() != curr.value() ||
+                            (next.value() == curr.value() && merged[k][c]))){
+                        if(k - 1 != r){
+                            board.move(c, k - 1, curr);
+                            changed = true;
+                        }
+                        break;
+                    }
+                    else{
+                        boolean moved = board.move(c, k, curr);
+                        changed = true;
+                        if (moved){
+                            score += board.tile(c,k).value();
+                            merged[k][c] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        board.setViewingPerspective(Side.NORTH);
 
         checkGameOver();
         if (changed) {
@@ -279,24 +321,17 @@ public class Model extends Observable {
                     else {
                         if ((b.tile(i, j)).value() == (b.tile(i, j - 1)).value()) {
                             return true;
-                        }
-                        else if ((b.tile(i, j)).value() == (b.tile(i, j + 1)).value()) {
+                        } else if ((b.tile(i, j)).value() == (b.tile(i, j + 1)).value()) {
                             return true;
-                        }
-                        else if ((b.tile(i, j)).value() == (b.tile(i - 1, j)).value()) {
+                        } else if ((b.tile(i, j)).value() == (b.tile(i - 1, j)).value()) {
                             return true;
-                        }
-                        else if ((b.tile(i, j)).value() == (b.tile(i+1, j)).value()) {
+                        } else if ((b.tile(i, j)).value() == (b.tile(i + 1, j)).value()) {
                             return true;
                         }
                     }
-
-
                 }
             }
-
         }
-
         return false;
     }
 
