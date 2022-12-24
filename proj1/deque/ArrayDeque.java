@@ -122,7 +122,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         return true;
     }
 
-    private class ArrayDequeIterator implements Iteraotr<T> {
+    private class ArrayDequeIterator implements Iterator<T> {
         private int index;
 
         ArrayDequeIterator() {
