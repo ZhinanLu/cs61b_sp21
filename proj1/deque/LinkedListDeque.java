@@ -1,9 +1,10 @@
 package deque;
 
+import java.util.Deque;
 import java.util.Iterator;
 
 
-public class LinkedListDeque<T> {
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private class typeNode {
         private typeNode prev;
         private T item;
@@ -115,7 +116,52 @@ public class LinkedListDeque<T> {
         return getRecursiveHelper(n.next, index - 1);
     }
 
+    public Iterator<T> iterator() {
+        return new LinkedListDequeIterator();
+    }
 
+    private class LinkedListDequeIterator implements iterator<T> {
+        private typeNode p;
+        LinkedListDequeIterator() {
+            p = head.next;
+        }
+
+        public boolean hasNext() {
+            return (p != head);
+        }
+
+        public T next() {
+            T item = (T) p.item;
+            p = p.next;
+            return item;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+
+        if(!(o instanceof Deque)) {
+            return false;
+        }
+        LinkedListDeque<T> other = (LinkedListDeque<T>) o;
+
+        if(size() != other.size()) {
+            return false;
+        }
+        for (int i = 0; i < size(); i++) {
+            if(!(other.get(i).equals(this.get(i)))) {
+                return false;
+            }
+        }
+        return true;
+
+    }
 
 }
 
